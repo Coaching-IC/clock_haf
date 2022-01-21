@@ -1,0 +1,127 @@
+<!--
+  - Full screen clock (24-hour with seconds)
+  - Copyright (c) 2020 Project Nayuki. All rights reserved.
+  - 
+  - https://www.nayuki.io/page/full-screen-clock-javascript
+  -->
+<!DOCTYPE html>
+<html style="height:100%; margin:0; padding:0">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>L'horloge stylée </title>
+	<style type="text/css">
+		/* Customizable font and colors */
+		html {
+			background: #000;
+			font-family: sans-serif;
+			font-weight: bold;
+			color: #fff;
+		}
+
+		.go {
+			background-color: green;
+		}
+
+		.stop {
+			background-color: red;
+		}
+	</style>
+</head>
+
+<body
+	style="display:flex; flex-direction: column; height:100%; margin:0; padding:0; justify-content:center; align-items:center">
+	<img src="logo.svg" , height="50%" />
+	<span id="status"></span>
+	<span id="clocktext" style="font-kerning:none">
+	</span>
+	<script>
+		"use strict";
+
+		var textElem = document.getElementById("clocktext");
+		var targetWidth = 0.9;  // Proportion of full screen width
+		var curFontSize = 20;  // Do not change
+		var flagModified = 0
+
+		function updateClock() {
+			var d = new Date();
+			var s_p = d.getSeconds();
+			var m = d.getMinutes();
+			var s = "";
+			s += (10 > d.getHours() ? "0" : "") + d.getHours() + ":";
+			s += (10 > d.getMinutes() ? "0" : "") + d.getMinutes() + ":";
+			s += (10 > d.getSeconds() ? "0" : "") + d.getSeconds();
+			textElem.textContent = s;
+			if (m == 0 && s_p == 0) {
+				document.body.style.backgroundColor = "green"
+				setTimeout(() => {
+				document.body.style.backgroundColor = ""}, 1_000 * 10 * 60)
+			}
+			setTimeout(updateClock, 1000 - d.getTime() % 1000 + 20);
+
+		}
+
+		function updateTextSize() {
+			for (var i = 0; 3 > i; i++) {  // Iterate for better better convergence
+				curFontSize *= targetWidth / (textElem.offsetWidth / textElem.parentNode.offsetWidth);
+				textElem.style.fontSize = curFontSize + "pt";
+			}
+		}
+
+		let nIntervId;
+		function changeColor() {
+			// check if already an interval has been set up
+			if (!nIntervId) {
+				nIntervId = setInterval(flashBg, 1000);
+			}
+		}
+
+		function flashBg() {
+			const oElem = document.body
+			if (oElem.className === "go") {
+				oElem.className = "stop";
+			} else {
+				oElem.className = "go";
+			}
+		}
+
+		function stopTextColor() {
+			clearInterval(nIntervId);
+			// release our intervalID from the variable
+			nIntervId = null;
+		}
+
+		updateClock();
+		updateTextSize();
+		window.addEventListener("resize", updateTextSize);
+	</script>
+</body>
+<script>
+	document.addEventListener("keypress", function (event) {
+		if (event.keyCode == 13) {
+			toggleFullScreen()
+		}
+	});
+	function toggleFullScreen() {
+		if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+			(!document.mozFullScreen && !document.webkitIsFullScreen)) {
+			if (document.documentElement.requestFullScreen) {
+				document.documentElement.requestFullScreen();
+			} else if (document.documentElement.mozRequestFullScreen) {
+				document.documentElement.mozRequestFullScreen();
+			} else if (document.documentElement.webkitRequestFullScreen) {
+				document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
+		} else {
+			if (document.cancelFullScreen) {
+				document.cancelFullScreen();
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if (document.webkitCancelFullScreen) {
+				document.webkitCancelFullScreen();
+			}
+		}
+	}
+</script>
+
+</html>
