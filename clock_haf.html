@@ -19,45 +19,58 @@
 			color: #fff;
 		}
 
-		.go {
-			background-color: green;
+		body {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			margin: 0; padding: 0;
+			justify-content: center;
+			align-items: center;
 		}
 
-		.stop {
-			background-color: red;
+		#status {
+			margin: 0;
+			font-size: 4vw;
 		}
 	</style>
 </head>
 
-<body
-	style="display:flex; flex-direction: column; height:100%; margin:0; padding:0; justify-content:center; align-items:center">
-	<img src="logo.svg" , height="50%" />
-	<span id="status"></span>
+<body>
+	<img src="logo.svg" height="50%" />
+	<p id="status">Pause dans </p>
 	<span id="clocktext" style="font-kerning:none">
 	</span>
 	<script>
 		"use strict";
 
-		var textElem = document.getElementById("clocktext");
+		const textElem = document.getElementById("clocktext");
+		const status = document.getElementById("status");
 		var targetWidth = 0.9;  // Proportion of full screen width
 		var curFontSize = 20;  // Do not change
 		var flagModified = 0
 
+		let pad = i => i >= 10 ? i.toString() : "0" + i
+
 		function updateClock() {
-			var d = new Date();
-			var s_p = d.getSeconds();
-			var m = d.getMinutes();
-			var s = "";
-			s += (10 > d.getHours() ? "0" : "") + d.getHours() + ":";
-			s += (10 > d.getMinutes() ? "0" : "") + d.getMinutes() + ":";
-			s += (10 > d.getSeconds() ? "0" : "") + d.getSeconds();
-			textElem.textContent = s;
-			if (m == 0 && s_p == 0) {
-				document.body.style.backgroundColor = "green"
-				setTimeout(() => {
-				document.body.style.backgroundColor = ""}, 1_000 * 10 * 60)
-			}
+			var d = new Date()
+			var isPause = d.getMinutes() <= 9
+
+
+			textElem.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+			document.body.style.backgroundColor = ["black", "green"][isPause + 0]
 			setTimeout(updateClock, 1000 - d.getTime() % 1000 + 20);
+
+			// target time (ie next hour)
+			if (isPause) {
+				status.style.visibility = "hidden";
+			} else {
+				var target = new Date()
+				target.setHours(target.getHours() + 1) // next hour
+				target.setMinutes(0)
+				target.setSeconds(0)
+				var pauseAt = new Date(target - d)
+				status.innerText = `Pause dans ${pad(pauseAt.getMinutes())}:${pad(pauseAt.getSeconds())} !`
+			}
 
 		}
 
