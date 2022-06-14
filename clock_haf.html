@@ -43,6 +43,7 @@
 	<script>
 		"use strict";
 
+		const PAUSE_DURATION = 10
 		const textElem = document.getElementById("clocktext");
 		const status = document.getElementById("status");
 		var targetWidth = 0.9;  // Proportion of full screen width
@@ -53,7 +54,7 @@
 
 		function updateClock() {
 			var d = new Date()
-			var isPause = d.getMinutes() <= 9
+			var isPause = d.getMinutes() <= PAUSE_DURATION
 
 
 			textElem.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
