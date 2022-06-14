@@ -9,7 +9,7 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>L'horloge stylée </title>
+	<title>L'horloge stylée</title>
 	<style type="text/css">
 		/* Customizable font and colors */
 		html {
@@ -64,6 +64,7 @@
 			if (isPause) {
 				status.style.visibility = "hidden";
 			} else {
+				status.style.visibility = "visible";
 				var target = new Date()
 				target.setHours(target.getHours() + 1) // next hour
 				target.setMinutes(0)
