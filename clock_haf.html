@@ -54,7 +54,7 @@
 
 		function updateClock() {
 			var d = new Date()
-			var isPause = d.getMinutes() <= PAUSE_DURATION
+			var isPause = d.getMinutes() < PAUSE_DURATION
 
 
 			textElem.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
